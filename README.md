@@ -26,46 +26,8 @@ Proxmox VE 9.1 (bare metal)
 └── VM:  bt-workbench       — Bluetooth/USB passthrough (BrainBit EEG, on-demand)
 ```
 
-## Project Structure
+## Roadmap
 
-```
-dorje/
-├── docs/                  # Setup guides and architecture decisions
-│   ├── 01-proxmox-install.md
-│   ├── 02-networking.md
-│   ├── 03-remote-access.md
-│   ├── 04-lxc-template.md
-│   └── 05-assistant.md
-├── assistant/             # Dorje AI assistant (custom web UI + API)
-├── scripts/               # Automation scripts (post-install, template creation, etc.)
-├── templates/             # LXC container configs and setup scripts
-└── README.md
-```
+All tasks, setup guides, and progress are tracked in [GitHub Issues](https://github.com/mfeeney/dorje/issues).
 
-## Goals (Priority Order)
-
-1. Install Proxmox VE 9.1 on the Beelink
-2. Configure networking (static IP, bridged containers, DNS)
-3. Set up Tailscale for secure remote access
-4. Create base LXC template (Ubuntu 24.04 + dev tools + Claude Code)
-5. Build and deploy the Dorje AI assistant
-6. Document clone/destroy workflow for dev environments
-7. (Future) Bluetooth VM template for BrainBit EEG work
-
-## Remote Access Strategy
-
-- **Tailscale** — Mesh VPN for SSH to Proxmox host and all containers, plus Proxmox web UI
-- **Cloudflare Tunnel** — Public access to the Dorje assistant web UI (with Cloudflare Access auth)
-
-## The Dorje Assistant
-
-A custom-built, self-hosted AI assistant accessible from anywhere. Lightweight alternative to OpenClaw with a focus on security and simplicity.
-
-- **Frontend:** React/Next.js chat UI (mobile-friendly)
-- **Backend:** Node.js API wrapping the Anthropic SDK
-- **Storage:** SQLite for persistent conversation history
-- **Auth:** Cloudflare Access + token-based auth
-- **Runtime:** Isolated LXC container
-- **Model:** Claude (Anthropic API)
-
-See [docs/05-assistant.md](docs/05-assistant.md) for full design.
+See the [Epic: Dorje Homelab Build-Out](https://github.com/mfeeney/dorje/issues/1) for the full plan.
