@@ -1,0 +1,88 @@
+version: "3"
+
+vars:
+  BACKEND_DIR: assistant/backend
+  FRONTEND_DIR: assistant/frontend
+
+tasks:
+  dev:
+    desc: Start backend and frontend dev servers
+    deps: [dev:backend, dev:frontend]
+
+  dev:backend:
+    desc: Start FastAPI dev server
+    dir: "{{.BACKEND_DIR}}"
+    cmd: uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8001
+
+  dev:frontend:
+    desc: Start Vite dev server
+    dir: "{{.FRONTEND_DIR}}"
+    cmd: npm run dev
+
+  install:
+    desc: Install all dependencies
+    deps: [install:backend, install:frontend]
+
+  install:backend:
+    desc: Install Python dependencies
+    dir: "{{.BACKEND_DIR}}"
+    cmd: uv sync --all-extras
+
+  install:frontend:
+    desc: Install Node dependencies
+    dir: "{{.FRONTEND_DIR}}"
+    cmd: npm install
+
+  lint:
+    desc: Lint all code
+    deps: [lint:backend, lint:frontend]
+
+  lint:backend:
+    desc: Lint Python code
+    dir: "{{.BACKEND_DIR}}"
+    cmd: uv run ruff check .
+
+  lint:frontend:
+    desc: Lint frontend code
+    dir: "{{.FRONTEND_DIR}}"
+    cmd: npx prettier --check "src/**/*.{ts,tsx,css}"
+
+  format:
+    desc: Format all code
+    deps: [format:backend, format:frontend]
+
+  format:backend:
+    desc: Format Python code
+    dir: "{{.BACKEND_DIR}}"
+    cmd: uv run ruff format .
+
+  format:frontend:
+    desc: Format frontend code
+    dir: "{{.FRONTEND_DIR}}"
+    cmd: npx prettier --write "src/**/*.{ts,tsx,css}"
+
+  test:
+    desc: Run all tests
+    deps: [test:backend, test:frontend]
+
+  test:backend:
+    desc: Run backend tests
+    dir: "{{.BACKEND_DIR}}"
+    cmd: uv run pytest
+
+  test:frontend:
+    desc: Run frontend tests
+    dir: "{{.FRONTEND_DIR}}"
+    cmd: npx vitest run
+
+  db:migrate:
+    desc: Run database migrations
+    dir: "{{.BACKEND_DIR}}"
+    cmd: uv run alembic upgrade head
+
+  db:revision:
+    desc: Create a new migration
+    dir: "{{.BACKEND_DIR}}"
+    cmd: uv run alembic revision --autogenerate -m "{{.MSG}}"
+    requires:
+      vars: [MSG]

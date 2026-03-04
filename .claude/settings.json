@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(task *)",
+      "Bash(uv *)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(git *)",
+      "Bash(ruff *)",
+      "Bash(cd *)"
+    ]
+  }
+}
