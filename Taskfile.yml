@@ -3,6 +3,7 @@ version: "3"
 vars:
   BACKEND_DIR: assistant/backend
   FRONTEND_DIR: assistant/frontend
+  PROXMOX_HOST: root@192.168.1.50
 
 tasks:
   dev:
@@ -86,3 +87,35 @@ tasks:
     cmd: uv run alembic revision --autogenerate -m "{{.MSG}}"
     requires:
       vars: [MSG]
+
+  # --- Homelab / LXC ---
+
+  lxc:list:
+    desc: List all LXC containers on Proxmox
+    cmd: ./scripts/list-dev.sh
+
+  lxc:clone:
+    desc: "Clone a dev container from template (e.g. task lxc:clone -- 101 my-project --start)"
+    cmd: ./scripts/clone-dev.sh {{.CLI_ARGS}}
+
+  lxc:destroy:
+    desc: "Destroy an LXC container (e.g. task lxc:destroy -- 101)"
+    cmd: ./scripts/destroy-dev.sh {{.CLI_ARGS}}
+
+  lxc:ssh:
+    desc: "SSH into a container by ID (e.g. task lxc:ssh -- 101)"
+    cmd: ssh root@10.10.10.{{.CLI_ARGS}}
+
+  lxc:status:
+    desc: Show Proxmox host resource usage
+    cmd: |
+      ssh {{.PROXMOX_HOST}} "
+        echo '=== Containers ==='
+        pct list
+        echo ''
+        echo '=== Memory ==='
+        free -h | head -2
+        echo ''
+        echo '=== Disk (local-lvm) ==='
+        pvesm status | grep local-lvm
+      "
